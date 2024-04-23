@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic');
+
+@import './addaptive';
+@import './mixin';
+body {
+   font-family: 'Montserrat', sans-serif;
+}
+.container {
+   margin: 0 auto;
+   max-width: 1920px;
+   display: flex;
+}
+
+.title__access {
+   color: $txtTitleAccess;
+   font-size: get-vh(64px);
+   font-style: normal;
+   font-weight: 700;
+   line-height: 1.25;
+   letter-spacing: -0.03em;
+}
+
+.propouse__reg {
+   margin-top: get-vh(40px);
+
+   font-size: get-vh(28px);
+   font-weight: 600;
+   line-height: 1.3;
+   letter-spacing: -0.02em;
+   & > .propouse__title {
+      color: $txtPropouse;
+      &:nth-child(2), & > .login {
+         cursor: pointer;
+         color: $txtTitleAccess;
+      }
+   }
+}
+
+.container__input-info {
+   margin-top: get-vh(40px);
+
+   display: flex;
+   flex-direction: column;
+
+   gap: get-vh(24px);
+   & > .item__info {
+      width: get-vh(500px);
+      height: get-vh(72px);
+
+      padding: 0 get-vh(10px);
+
+      border-radius: get-vh(24px);
+      background: rgba(24, 123, 205, 0.08);
+
+      color: $txtTitleAccess;
+      text-align: center;
+      font-size: get-vh(28px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      &::placeholder {
+         color: $txtInputPlaceholder;
+      }
+      &:focus {
+         background: rgba(24, 123, 205, 0.18);
+      }
+      &.trubl {
+         background: rgba(229, 0, 0, 0.08);
+         color: $txtTrubltext;
+         &::placeholder {
+            color: $txtInputTrublPlaceholder;
+         }
+      }
+      
+   }
+}
+
+.save__password {
+   margin-top: get-vh(47px);
+   @include centerHorizontal;
+   gap: get-vh(20px);
+
+   text-align: left;
+   color: $txtTitleAccess;
+   font-size: get-vh(28px);
+   font-weight: 600;
+   letter-spacing: -0.02em;
+   & > .block__check {
+      width: get-vh(48px);
+      height: get-vh(48px);
+
+      border-radius: get-vh(18px);
+      background: rgba(24, 123, 205, 0.10);
+
+      @include centerHorizontal;
+      justify-content: center;
+      & > .icon-check {
+         width: get-vh(36px);
+         height: get-vh(36px);
+      }
+   }
+}
+
+.send__info {
+   margin-top: get-vh(48px);
+   width: get-vh(500px);
+   height: get-vh(72px);
+
+   border-radius: get-vh(24px);
+   background: rgba(0, 112, 204, 0.20);
+
+   color: $txtTitleAccess;
+   font-size: get-vh(28px);
+   font-weight: 600;
+   letter-spacing: -0.02em;
+   
+   transition: background 0.25s ease-out, color 0.25s ease-out;
+   &.active {
+      color: $txtPrimary;
+      background: #0070CC;
+   }
+}
+
+.password__info-container {
+   overflow: hidden;
+   position: relative;
+
+   width: get-vh(500px);
+   height: get-vh(72px);
+
+   @include centerHorizontal;
+
+   border-radius: get-vh(24px);
+   background: rgba(24, 123, 205, 0.08);
+   & > .item__info {
+      width: 100%;
+      height: 100%;
+      padding: 0 get-vh(60px);
+
+      color: $txtTitleAccess;
+      text-align: center;
+      font-size: get-vh(28px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      &::placeholder {
+         color: $txtInputPlaceholder;
+      }
+      &:focus {
+         background: rgba(24, 123, 205, 0.18);
+      }
+   }
+   & > .icon-visible {
+      position: absolute;
+      right: get-vh(24px);
+
+      width: get-vh(32px);
+      height: get-vh(32px);
+      
+      transition: opacity 0.25s ease-out;
+      &.hiden {
+         opacity: 0.25;
+      }
+   }
+}

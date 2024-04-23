@@ -1,0 +1,8 @@
+@function get-vw($object) {
+   $vh-lg: (1920 * 0.01) * 1px;
+   @return calc($object / $vh-lg) * 1vw;
+}
+@function get-vh($object) {
+   $vh-sm: (1080 * 0.01) * 1px;
+   @return calc($object / $vh-sm) * 1vh;
+}
