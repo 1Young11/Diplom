@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "c/6tg+jKK1X584JRQoWQgPpS5OldVWrZ46SoU4QbnKB7IOaIvINOw2vHbjvn1J1phJoDmt5JFh7XNHcL/gwcEw==",
+  "dgSpecHash": "G4Yz+iP2eL2xk1Rl/mPQYuHWoJNa94eQ67MZ1RmzSjM6yNS/BdzMnmGwu7RXAhjeRAOJCTHbl8JF2ze8qD8o0g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lenovo\\Desktop\\Diplom\\Backend\\CruiseVoyage\\CruiseVoyage.csproj",
+  "projectFilePath": "C:\\Users\\Lenovo\\Documents\\GitHub\\Diplom\\Backend\\CruiseVoyage\\CruiseVoyage.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.29\\microsoft.entityframeworkcore.6.0.29.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.29\\microsoft.entityframeworkcore.abstractions.6.0.29.nupkg.sha512",

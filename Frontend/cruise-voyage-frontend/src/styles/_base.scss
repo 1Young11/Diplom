@@ -5,10 +5,21 @@
 body {
    font-family: 'Montserrat', sans-serif;
 }
+button {
+   transition: background 0.25s ease-out;
+}
 .container {
    margin: 0 auto;
    max-width: 1920px;
    display: flex;
+   &.main {
+      max-width: 1560px;
+      padding: 0 15px;
+   }
+   &.small {
+      max-width: 1192px;
+      padding: 0 15px;
+   }
 }
 
 .title__access {
@@ -149,6 +160,13 @@ body {
       &:focus {
          background: rgba(24, 123, 205, 0.18);
       }
+      &.trubl {
+         background: rgba(229, 0, 0, 0.08);
+         color: $txtTrubltext;
+         &::placeholder {
+            color: $txtInputTrublPlaceholder;
+         }
+      }
    }
    & > .icon-visible {
       position: absolute;
@@ -161,5 +179,14 @@ body {
       &.hiden {
          opacity: 0.25;
       }
+   }
+}
+
+.vc-bordered {
+   margin-top: get-vh(72px);
+   margin-left: get-vh(530px);
+   z-index: 2;
+   &.visibletwo {
+      animation: visible 0.25s ease-out forwards;
    }
 }

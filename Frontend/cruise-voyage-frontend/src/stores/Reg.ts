@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import router from '@/main';
 
 interface Registration {
    name: string,
@@ -68,21 +69,32 @@ export const useRegInfo = defineStore('regStore', {
             }, 3000);
             return;
          } 
-         // try {
-         //    await axios.post('http://localhost:5282/api/Customer/addCustomer', {
-         //       name: this.name,
-         //       lastName: this.lastName,
-         //       phone: this.mobilePhone,
-         //       email: this.newEmail,
-         //       password: this.newPassword
-         //    })
-         //    .then(response => {console.log(response)})
-         //    .catch(e => {
-         //       console.error(e)
-         //    });
-         // } catch (error) {
-         //    console.error('Ошибка при отправке запроса:', error);
-         // }
+         try {
+            await axios.post('http://localhost:5282/api/Customer/addCustomer', {
+               name: this.name,
+               lastName: this.lastName,
+               phone: this.mobilePhone,
+               email: this.newEmail,
+               password: this.newPassword
+            })
+            .then(response => {
+               localStorage.setItem('userData', JSON.stringify({
+                  email: this.newEmail,
+                  password: this.newPassword
+               }));
+               this.setExpireIn();
+               router.push('/mainpage');
+            })
+            .catch(e => {
+               console.error(e)
+            });
+         } catch (error) {
+            console.error('Ошибка при отправке запроса:', error);
+         }
+      },
+      setExpireIn() {
+         localStorage.setItem('userdata_expireIn', JSON.stringify(new Date().getTime() + 1000 * 60 * 60 * 24));
+         return;
       },
    },
    getters: {

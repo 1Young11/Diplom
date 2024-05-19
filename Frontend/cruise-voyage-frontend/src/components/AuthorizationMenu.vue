@@ -5,9 +5,9 @@
       <h3 class="propouse__title" @click="$router.push('/reg');">Створити новий акаунт</h3>
    </div>
    <div class="container__input-info">
-      <input type="text" class="item__info" placeholder="Email" v-model="authStore.currentEmail">
+      <input type="text" class="item__info" placeholder="Email" v-model="authStore.currentEmail" :class="{trubl: authStore.trublCurrentEmail}">
       <div class="password__info-container">
-         <input :type="authStore.visibleCurrentPass ? 'text' : 'password'" class="item__info" placeholder="Пароль" v-model="authStore.currentPassword">
+         <input :type="authStore.visibleCurrentPass ? 'text' : 'password'" class="item__info" placeholder="Пароль" v-model="authStore.currentPassword" :class="{trubl: authStore.trublCurrentPassword}">
          <img src="../img/reg-auth/pwd_visibility.svg" alt="" class="icon-visible" :class="{hiden: !authStore.visibleCurrentPass && authStore.currentPassword.length > 0}"
             v-show="authStore.currentPassword.length > 0" 
             @click="authStore.visibleCurrentPass = !authStore.visibleCurrentPass">

@@ -1,6 +1,7 @@
 using CruiseVoyage.DbContext;
 using CruiseVoyage.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CruiseVoyage.Controllers;
 
@@ -14,7 +15,7 @@ public class CustomerController : ControllerBase
     {
         this._dbContext = dbContext;
     }
-        
+
     [HttpPost("addCustomer")]
     public async Task<IActionResult> AddCustomer(
         [FromBody] AddCustomerRequest request)
@@ -31,12 +32,45 @@ public class CustomerController : ControllerBase
         return this.Ok();
     }
 
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequest request)
+    {
+        var customer = await this._dbContext.Customer.FirstOrDefaultAsync(x => x.Email == request.Email);
+        if (customer is null)
+        {
+            var customerNotFound = new ErrorResponse()
+            {
+                ErrorCode = "EMAIL_NOT_FOUND"
+            };
+            return this.BadRequest(customerNotFound);
+        }
+
+        if (customer.Password != request.Password) 
+        {
+            var customerNotFound = new ErrorResponse()
+            {
+                ErrorCode = "INVALID_PASSWORD"
+            };
+            return this.BadRequest(customerNotFound);
+        }
+
+        return this.Ok(customer);
+    }
+
+
     public class AddCustomerRequest
     {
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Name { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Phone { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
+    }
+    
+    public class LoginRequest
+    {
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
     }
 }
