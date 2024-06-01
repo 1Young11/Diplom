@@ -198,9 +198,9 @@ export default defineComponent({
 
       onBeforeMount(() => {
          cruiseStore.fetchCruises(); 
-         if (!authStore.isUserLoggedIn()) {
-            authStore.Logout();
-         }
+         // if (!authStore.isUserLoggedIn()) {
+         //    authStore.Logout();
+         // }
       });
 
       const scrollToTarget = (target: string) => {

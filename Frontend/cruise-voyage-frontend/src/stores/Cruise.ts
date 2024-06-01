@@ -5,7 +5,7 @@ interface Cruise {
    checkArrivedFrom: boolean,
    checkArrivedTo: boolean,
    checkArrivedDate: boolean,
-   cruisesList: Array<{arrivedFrom: string, arrivedTo: string, countDays: string, startPrice: number}>,
+   cruisesList: Array<{arrivedFrom: string, arrivedTo: string, arrivedFromDate: string, arrivedToDate: string, countDays: string, startPrice: number, rating: number, fav: boolean, distance: number, cruisePoint: Array<{pointName: string, listNo: number}>}>,
    activeArrivedFrom: number,
    activeArrivedTo: number,
    currentDate: Date | undefined,
@@ -41,6 +41,7 @@ export const useCruiseInfo = defineStore('cruiseStore', {
          try {
             const response = await axios.get('http://localhost:5282/api/Cruises/GetCruises');
             const cruisesData = response.data;
+            console.log(cruisesData)
             this.cruisesList = [];
             this.TakeDateFromCruises(cruisesData);
          } catch (error) {
@@ -62,11 +63,26 @@ export const useCruiseInfo = defineStore('cruiseStore', {
             } else {
                countDays = `${differenceInDays} ночей`;
             }
+
+            const cruisePoints = []
+            for (const point of item.cruisePoints) {
+               cruisePoints.push({
+                  pointName: point.pointName,
+                  listNo: point.listNo
+               })
+            }
+
             this.cruisesList.push({
                arrivedFrom: item.arrivedFrom,
                arrivedTo: item.arrivedTo,
+               arrivedFromDate: item.arrivedFromDate,
+               arrivedToDate: item.arrivedToDate,
                countDays: countDays,
-               startPrice: 5000
+               startPrice: 5000,
+               rating: item.rating,
+               fav: false,
+               distance: item.travelDistance, 
+               cruisePoint: cruisePoints
             })
          }
       },

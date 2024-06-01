@@ -1,9 +1,3 @@
-// const { defineConfig } = require('@vue/cli-service')
-// module.exports = defineConfig({
-//   transpileDependencies: true
-// })
-
-
 module.exports = {
   publicPath: '.',
   outputDir: "C:/Users/User/Documents/GitHub/SecondLifeGIt/client_packages/cef/front/Global_menu",

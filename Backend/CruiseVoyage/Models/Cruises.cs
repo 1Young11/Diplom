@@ -10,4 +10,6 @@ public class Cruises
     public float Rating { get; set; } 
     public int CountPoint { get; set; }
     public float TravelDistance { get; set; }
+    public virtual List<CruisePoint>? CruisePoints { get; set; } 
+    public virtual Ship Ship { get; set; } = null!;
 }
