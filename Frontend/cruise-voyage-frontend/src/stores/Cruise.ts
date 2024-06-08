@@ -26,8 +26,8 @@ interface Cruise {
       }>
    },
    pageReserve: number | null,
-   currentTypeCabin: number | null,
-   activeCabin: number,
+   currentTypeCabin: number,
+   activeCabin: {ind: number, choosen: number},
    currentReservation: number[],
    typeCabins: Array<{type: string, price: number}>
 }
@@ -64,9 +64,9 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       countFloors: [],
       activeFloor: -1,
       pageReserve: 0,
-      currentTypeCabin: null,
-      activeCabin: -1,
-      currentReservation: [1,2,3],
+      currentTypeCabin: -1,
+      activeCabin: {ind: -1, choosen: -1},
+      currentReservation: [],
 
       cabin: {},
       typeCabins: [],
@@ -153,14 +153,21 @@ export const useCruiseInfo = defineStore('cruiseStore', {
          });
          router.push('/findcruise');
       },
+      HandleClickActiveCabin(idCabin: number) {
+         const indCabin =  this.cabin[this.activeFloor].findIndex(cabin => cabin.idCabin == idCabin);
+         if (indCabin != -1) {
+            this.activeCabin.ind = indCabin;
+            this.activeCabin.choosen = idCabin;
+         }
+      },
       SelectPlaceInCabin(index: number) {
-         // const isBooked = this.cabinFirstFloor[this.activeCabin].place[index];
-         // if (this.currentReservation.includes(index)) return;
-         // if (isBooked.isBooked) {
-         //    return;
-         // } else {
-         //    this.currentReservation.push(index);
-         // }
+         const isBooked = this.cabin[this.activeFloor][this.activeCabin.ind].cabinBeds[index];
+         if (this.currentReservation.includes(index)) return;
+         if (isBooked.isBooked) {
+            return;
+         } else {
+            this.currentReservation.push(index);
+         }
       },
       async fetchCabinsByCruise(cruiseId: number) {
          try {

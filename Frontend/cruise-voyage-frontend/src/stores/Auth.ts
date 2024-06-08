@@ -38,7 +38,11 @@ export const useAuthInfo = defineStore('authStore', {
                   localStorage.setItem('userData', JSON.stringify(userData));
                   this.setExpireIn();
                }
+               console.log(userData)
                userStore.idCustomer = userData.idCustomer;
+               userStore.nameCustomer = userData.name;
+               userStore.lastNameCustomer = userData.surname;
+               userStore.phoneCustomer = userData.phone;
                this.isAuth = true;
                router.push('/mainpage');
             })

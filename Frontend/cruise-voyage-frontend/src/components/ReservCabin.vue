@@ -2,7 +2,7 @@
    <div class="bg__rout">
       <div class="rout__part">
          <img src="../img/reg-auth/logo.png" alt="" class="icon-logo">
-         <div class="name__totravell">Іспанія</div>
+         <div class="name__totravell">{{ cruiseStore.cruisesList[cruiseStore.activeCruise].arrivedFrom }}</div>
          <div class="wrapper__info">
             <div class="item__info">
                <div class="title__info">{{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[0].dateArrived).toLocaleString('uk-UA', {day: '2-digit'}) }} &nbsp; –  &nbsp; {{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint.length - 1].dateArrived).toLocaleString('uk-UA', {day: '2-digit'}) }} {{ cruiseStore.formatDate(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[0].dateArrived).slice(2) }} {{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint.length - 1].dateArrived).toLocaleString('uk-UA', {year: 'numeric'}) }}</div>
@@ -24,7 +24,7 @@
                <div class="day__item">{{ index + 1 }}</div>
                <div class="wrapper__travellto">
                   <div class="title__travell">{{ point.pointName }}</div>
-                  <div class="subtitle__travell">{{ cruiseStore.formatDate(point.dateArrived) }} {{ index == 0 ? '•  Початок подорожі' : ''}}</div>
+                  <div class="subtitle__travell">{{ cruiseStore.formatDate(point.dateArrived) }} {{ index == 0 ? '•  Початок подорожі' : ''}} {{ index == cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint.length - 1 ? '•  Кінець подорожі' : '' }}</div>
                </div>
             </div>
             
@@ -63,11 +63,11 @@
             <div class="wrapper__floors">
                <img src="../img/reserv-cabin/deck.png" alt="" class="icon__floor">
                <ul class="list__cabin">
-                  <li class="item__cabin" v-for="(cabin, index) in cruiseStore.cabin[cruiseStore.activeFloor]" :key="index" @click="cruiseStore.activeCabin = cabin.idCabin">
+                  <li class="item__cabin" v-for="(cabin, index) in cruiseStore.cabin[cruiseStore.activeFloor]" :key="index" @click="cruiseStore.HandleClickActiveCabin(cabin.idCabin)">
                      <div class="status__cabin" 
                         :class="{
                            'active-type-cabin': cruiseStore.currentTypeCabin == cabin.idCabintype, 
-                           active: cruiseStore.activeCabin == cabin.idCabin, 
+                           active: cruiseStore.activeCabin.ind == index, 
                            busy: cabin.cabinBeds.some(p => p.isBooked) && !cabin.cabinBeds.every(p => p.isBooked), 
                            block: cabin.cabinBeds.every(p => p.isBooked)
                         }" 
@@ -85,7 +85,7 @@
                   </li>
                </ul>
             </div>
-            <div class="status__cabins" v-if="cruiseStore.activeCabin == -1">
+            <div class="status__cabins" v-if="cruiseStore.activeCabin.ind == -1">
                <div class="item__status">
                   <div class="block__status">
                      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="20" viewBox="0 0 26 20" fill="none" class="icon-status">
@@ -112,9 +112,9 @@
                </div>
             </div>
             <div class="choose__place" v-else>
-               <div class="title__cabinreserve">Доступно {{ cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin].cabinBeds.length }} місця. Оберіть необхідну кількість:</div>
+               <div class="title__cabinreserve">Доступно {{ cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds.length }} місця. Оберіть необхідну кількість:</div>
                <div class="wrapper__hotel">
-                  <div class="item__status" v-for="(place, index) in cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin].cabinBeds" :key="index" 
+                  <div class="item__status" v-for="(place, index) in cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds" :key="index" 
                      :class="{block: place.isBooked, active: cruiseStore.currentReservation.includes(index)}" 
                      @click="cruiseStore.SelectPlaceInCabin(index)"
                   >
@@ -124,21 +124,26 @@
                   </div>
                </div>
             </div>
-            <div class="description__cabin" v-if="cruiseStore.activeCabin == -1">Без позначки - каюта недоступна для обраного типу (Люкс). <br>  Поверніться назад та оберіть інший тип каюти.</div>
-            <button class="choose__nexttype" v-if="cruiseStore.activeCabin == -1" @click="cruiseStore.pageReserve = 0">Обрати інший тип каюти</button>
-            <div class="wrapper__btn" v-if="cruiseStore.activeCabin != -1">
-               <button class="choose" @click="cruiseStore.activeCabin = -1; cruiseStore.currentReservation = []">Скасувати</button>
+            <div class="description__cabin" v-if="cruiseStore.activeCabin.ind == -1">Без позначки - каюта недоступна для обраного типу (Люкс). <br>  Поверніться назад та оберіть інший тип каюти.</div>
+            <button class="choose__nexttype" v-if="cruiseStore.activeCabin.ind == -1" @click="cruiseStore.pageReserve = 0">Обрати інший тип каюти</button>
+            <div class="wrapper__btn" v-if="cruiseStore.activeCabin.ind != -1">
+               <button class="choose" @click="cruiseStore.activeCabin.ind = -1; cruiseStore.currentReservation = []">Скасувати</button>
                <button class="choose" @click="cruiseStore.pageReserve = 2">Підтвердити {{ cruiseStore.currentReservation.length }} місця</button>
             </div>
          </div>
          <div class="add__member" v-if="cruiseStore.pageReserve == 2">
             <div class="title__cabin">Вкажіть дані осіб, <br> з якими ви подорожуєте</div>
             <div class="item__member" v-for="(member, index) in cruiseStore.currentReservation" :key="index">
-               <div class="title__member">Пасажир 1 - Ви (інформація з профіля користувача)</div>
-               <div class="wrapper__block">
-                  <div class="item__block">Вакарчук</div>
-                  <div class="item__block">Святослав</div>
-                  <div class="item__block">+38(098)-765-4321</div>
+               <div class="title__member">{{ index == 0 ? 'Пасажир 1 - Ви (інформація з профіля користувача)' : `Пасажир ${index+1}` }}</div>
+               <div class="wrapper__block" v-if="index == 0">
+                  <div class="item__block">{{ userStore.nameCustomer }}</div>
+                  <div class="item__block">{{ userStore.lastNameCustomer }}</div>
+                  <div class="item__block">{{ userStore.phoneCustomer }}</div>
+               </div>
+               <div class="wrapper__block inp" v-else>
+                  <input type="text" class="item__block">
+                  <input type="text" class="item__block">
+                  <input type="text" class="item__block">
                </div>
                <div class="want__buyall" v-if="index == 0">
                   <div class="circle__check">
@@ -148,21 +153,21 @@
                </div>
             </div>
             <div class="wrapper__btn">
-               <button class="choose" @click="cruiseStore.pageReserve = 1; cruiseStore.currentReservation = []; cruiseStore.activeCabin = -1">Обрати іншу каюту</button>
-               <button class="choose" @click="cruiseStore.pageReserve = 2">Підтвердити</button>
+               <button class="choose" @click="cruiseStore.pageReserve = 1; cruiseStore.currentReservation = []; cruiseStore.activeCabin.ind = -1">Обрати іншу каюту</button>
+               <button class="choose" @click="cruiseStore.pageReserve = 3">Підтвердити</button>
             </div>
          </div>
          <div class="accept__info" v-if="cruiseStore.pageReserve == 3">
             <div class="title__cabin">Ваша подорож!</div>
-            <div class="subtitle__reserve">Бронювання на: Cumberbatch С.</div>
+            <div class="subtitle__reserve">Бронювання на: {{ userStore.nameCustomer }} {{ userStore.lastNameCustomer }}</div>
             <div class="wrapper__floors">
                <img src="../img/reserv-cabin/deck.png" alt="" class="icon__floor">
                <ul class="list__cabin">
                   <li class="item__cabin" v-for="(cabin, index) in cruiseStore.cabin[cruiseStore.activeFloor]" :key="index">
                      <div class="status__cabin" 
-                        :class="{active: cruiseStore.activeCabin == index}" 
-                        v-if="cruiseStore.activeCabin == index">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" viewBox="0 0 25 20" fill="none" class="icon-check" v-if="cruiseStore.activeCabin == index">
+                        :class="{active: cruiseStore.activeCabin.ind == index}" 
+                        v-if="cruiseStore.activeCabin.ind == index">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" viewBox="0 0 25 20" fill="none" class="icon-check" v-if="cruiseStore.activeCabin.ind == index">
                            <path d="M4.97974 15.96C4.76963 15.96 4.60329 15.8987 4.48072 15.7761C4.35816 15.6534 4.29688 15.4929 4.29688 15.2944V14.0158C4.29688 13.5604 4.41069 13.1488 4.63831 12.7809C4.86593 12.4131 5.18401 12.1416 5.59257 11.9665C6.46803 11.5812 7.26471 11.3009 7.98259 11.1258C8.70047 10.9506 9.43878 10.863 10.1975 10.863C10.9563 10.863 11.6887 10.9506 12.3949 11.1258C13.1012 11.3009 13.892 11.5812 14.7675 11.9665C15.176 12.1416 15.497 12.4102 15.7305 12.7722C15.9639 13.1342 16.0807 13.5487 16.0807 14.0158V15.3119C16.0807 15.4987 16.0194 15.6534 15.8968 15.7761C15.7742 15.8987 15.6137 15.96 15.4153 15.96H4.97974ZM16.746 15.96C16.8744 15.9366 16.9853 15.8665 17.0787 15.7498C17.1721 15.633 17.2188 15.4754 17.2188 15.2769V13.9983C17.2188 13.2743 17.0606 12.8015 16.6929 12.2819C16.3252 11.7623 15.3972 11.2427 14.7669 10.8807C15.6074 10.9858 16.7956 11.0615 17.5252 11.2484C18.2547 11.4352 18.8646 11.6512 19.3549 11.8964C19.7635 12.13 20.0903 12.4277 20.3354 12.7897C20.5806 13.1517 20.7031 13.5604 20.7031 14.0158V15.3119C20.7031 15.4987 20.6389 15.6534 20.5105 15.7761C20.3821 15.8987 20.2187 15.96 20.0203 15.96H16.746ZM10.1975 9.70703C9.3454 9.70703 8.6567 9.44138 8.13142 8.91009C7.60614 8.37879 7.3435 7.69862 7.3435 6.86957C7.3435 6.02884 7.60614 5.3399 8.13142 4.80277C8.6567 4.26564 9.33956 3.99707 10.18 3.99707C11.0205 3.99707 11.7092 4.26564 12.2461 4.80277C12.7831 5.3399 13.0515 6.023 13.0515 6.85205C13.0515 7.69278 12.7831 8.37879 12.2461 8.91009C11.7092 9.44138 11.0263 9.70703 10.1975 9.70703ZM17.1662 6.85205C17.1662 7.69278 16.8978 8.37879 16.3608 8.91009C15.8239 9.44138 15.141 9.70703 14.3122 9.70703C14.1488 9.70703 13.9766 9.69535 13.7957 9.672C13.6148 9.64864 13.3428 9.53785 13.1911 9.47947C13.4829 9.15252 13.8074 8.83127 13.9533 8.37587C14.0992 7.92048 14.1721 7.41254 14.1721 6.85205C14.1721 6.30324 14.0992 5.81281 13.9533 5.38077C13.8074 4.94873 13.4829 4.61024 13.1911 4.2249C13.3428 4.1782 13.6177 4.07005 13.8044 4.04086C13.9912 4.01167 14.1605 3.99707 14.3122 3.99707C15.141 3.99707 15.8239 4.26564 16.3608 4.80277C16.8978 5.3399 17.1662 6.023 17.1662 6.85205Z" fill="#074D87"/>
                         </svg>
                      </div>
@@ -170,8 +175,8 @@
                </ul>
             </div>
             <div class="wrapper__costinfo">
-               <div class="number__cabin">Каюта №356 (0 поверх) <span>₴80000</span></div>
-               <div class="status__cabin">Люкс, ₴20000 за ліжко <span>4 ліжка, 4 пасажири</span></div>
+               <div class="number__cabin">Каюта №{{ cruiseStore.activeCabin.choosen }} ({{ cruiseStore.activeFloor }} поверх) <span>₴80000</span></div>
+               <div class="status__cabin">{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].type }}, ₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price }} за ліжко <span>{{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'ліжко' : 'ліжка'}}, {{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'пасажир' : 'пасажири'}}</span></div>
             </div>
             <div class="wrapper__submit">
                <div class="circle__check">
@@ -181,7 +186,7 @@
             </div>
             <div class="description__reserve">Уважно перевірте всі деталі бронювання, перед тим як підтверджувати їх. Для внесення змін у бронювання ви можете звернутися до Служби підтримки, але не пізніше ніж за 7 діб до відправлення. Бронювання може бути скасоване не пізніше ніж за 14 діб до відправлення. Оплата бронювання здійснюється у повному обсязі одразу після підтвердження даних. При скасуванні бронювання раніше, ніж за 14 діб до відправлення, кошти будуть повністю повернуті протягом 60 календарних днів. При пізнішому скасуванні кошти можуть бути повернуті лише частково.</div>
             <div class="wrapper__btn">
-               <button class="choose" @click="cruiseStore.pageReserve = 1; cruiseStore.currentReservation = []; cruiseStore.activeCabin = -1">Скасувати</button>
+               <button class="choose" @click="cruiseStore.pageReserve = 1; cruiseStore.currentReservation = []; cruiseStore.activeCabin.ind = -1; cruiseStore.activeCabin.choosen = -1">Скасувати</button>
                <button class="choose" @click="cruiseStore.pageReserve = 2">Підтвердити та сплатити</button>
             </div>
          </div>
@@ -192,16 +197,19 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount } from "vue";
 import { useCruiseInfo } from "@/stores/Cruise";
+import { useUserInfo } from "@/stores/UserInfo";
 
 export default defineComponent({
    setup() {
       const cruiseStore = useCruiseInfo();
+      const userStore = useUserInfo();
       onBeforeMount(() => {
          cruiseStore.fetchCabinsType(); 
       });
 
       return {
          cruiseStore,
+         userStore
       };
    },
 });
@@ -702,6 +710,12 @@ export default defineComponent({
                   width: 100%;
                   display: flex;
                   gap: get-vh(16px);
+                  &.inp {
+                     & > .item__block { 
+                        text-align: center;
+                        padding: 0 get-vh(12px);
+                     }
+                  }
                   & > .item__block {
                      width: get-vh(245px);
                      height: get-vh(56px);

@@ -60,9 +60,11 @@ public class CruisesController : ControllerBase
     [HttpGet("Test")]
     public async Task<IActionResult> Test()
     {
-        for (int i = 32; i < 65; i++)
+        var random = new Random();
+        for (int i = 1; i <= 72; i++)
         {
-            for (int j = 0; j < 3; j++)
+            int randomCount = random.Next(2, 5);
+            for (int j = 0; j < randomCount; j++)
             {
                 var cabinbed = new CabinBed();
                 cabinbed.idCabin = i;
