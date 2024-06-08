@@ -13,6 +13,7 @@ import RegistrationMenu from "./components/RegistrationMenu.vue";
 import MainPageMenu from "./components/MainPageMenu.vue";
 import UserProfile from "./components/UserProfile.vue";
 import FindCruise from "./components/FindCruise.vue";
+import ReservCabin from "./components/ReservCabin.vue"
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -39,6 +40,10 @@ const routes = [
    {
       path: '/findcruise',
       component: FindCruise
+   },
+   {
+      path: '/reservcabin',
+      component: ReservCabin
    },
 ];
 export const router = createRouter({

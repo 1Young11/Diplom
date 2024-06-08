@@ -1,7 +1,7 @@
 <template>
    <header class="header__navigation" @click="cruiseStore.checkArrivedFrom = false; cruiseStore.checkArrivedTo = false; cruiseStore.checkArrivedDate = false">
       <div class="container main">
-         <img src="../img/reg-auth/logo.png" alt="" class="icon-logo">
+         <img src="../img/reg-auth/logo.png" alt="" class="icon-logo" @click="$router.push('/mainpage');">
          <nav class="navigation">
             <ul>
                <li><a @click="scrollToTarget('Cruises')">ПОДОРОЖІ</a></li>
@@ -22,12 +22,12 @@
          <div class="container__find-cruise" :class="{active: cruiseStore.checkArrivedFrom || cruiseStore.checkArrivedTo}">
             <div class="wrapper__find-something">
                <div class="title__find">ВІДПРАВЛЕННЯ З</div>
-               <div class="subtitle__find">{{ cruiseStore.activeArrivedFrom == -1 ? 'Будь-якого міста' : cruiseStore.cruisesList[cruiseStore.activeArrivedFrom].arrivedFrom }}</div>
+               <div class="subtitle__find">{{ cruiseStore.activeArrivedFrom == -1 ? 'Будь-якого міста' : cruiseStore.travelFrom[cruiseStore.activeArrivedFrom] }}</div>
                <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedFrom}" @click.stop="cruiseStore.checkArrivedFrom = !cruiseStore.checkArrivedFrom; cruiseStore.checkArrivedTo = false">
             </div>
             <div class="wrapper__find-something">
                <div class="title__find">ПРИБУТТЯ У</div>
-               <div class="subtitle__find">{{ cruiseStore.activeArrivedTo == -1 ? 'Будь-яке місто' : cruiseStore.cruisesList[cruiseStore.activeArrivedTo].arrivedTo }}</div>
+               <div class="subtitle__find">{{ cruiseStore.activeArrivedTo == -1 ? 'Будь-яке місто' : cruiseStore.travelTo[cruiseStore.activeArrivedTo] }}</div>
                <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedTo}" @click.stop="cruiseStore.checkArrivedTo = !cruiseStore.checkArrivedTo; cruiseStore.checkArrivedFrom = false">
             </div>
             <div class="wrapper__find-something">
@@ -35,25 +35,25 @@
                <div class="subtitle__find">{{ cruiseStore.currentDate == undefined ? 'Будь-яка дата' : new Date(cruiseStore.currentDate).toLocaleDateString('uk-UA', {day: '2-digit', month: '2-digit', year: 'numeric'}) }}</div>
                <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedDate}" @click.stop="cruiseStore.checkArrivedDate = !cruiseStore.checkArrivedDate">
             </div>
-            <button class="find__cruise">Пошук</button>
+            <button class="find__cruise" @click="cruiseStore.FindCruise()">Пошук</button>
          </div>
          <div class="wrapper__find-cruises" :class="{visible: cruiseStore.checkArrivedFrom}">
             <ul class="list__name__cruises">
-               <li class="item__cruise" v-for="(cruise, index) in cruiseStore.cruisesList" :key="index" 
-                  @click.stop="cruiseStore.activeArrivedFrom = index" 
+               <li class="item__cruise" v-for="(cruise, index) in cruiseStore.travelFrom" :key="index" 
+                  @click.stop="cruiseStore.activeArrivedFrom = index; cruiseStore.checkArrivedFrom = false" 
                   :class="{active: cruiseStore.activeArrivedFrom == index}"
                   v-show="cruiseStore.checkArrivedFrom">
-                  {{ cruise.arrivedFrom }}
+                  {{ cruise }} 
                </li>
             </ul>
          </div>
          <div class="wrapper__find-cruises" :class="{visibletwo: cruiseStore.checkArrivedTo}">
             <ul class="list__name__cruises">
-               <li class="item__cruise" v-for="(cruise, index) in cruiseStore.cruisesList" :key="index" 
-                  @click.stop="cruiseStore.activeArrivedTo = index" 
+               <li class="item__cruise" v-for="(cruise, index) in cruiseStore.travelTo" :key="index" 
+                  @click.stop="cruiseStore.activeArrivedTo = index; cruiseStore.checkArrivedTo = false" 
                   :class="{active: cruiseStore.activeArrivedTo == index}"
                   v-show="cruiseStore.checkArrivedTo">
-                  {{ cruise.arrivedTo }}
+                  {{ cruise }}
                </li>
             </ul>
          </div>
@@ -62,12 +62,12 @@
    </div>
    <div class="countfind__sort">
       <div class="container main">
-         Результати пошуку круїзів (100)
+         Результати пошуку круїзів ({{ cruiseStore.filteredCruises.length }})
          <div class="wrapper__sort">Сортувати за: Датою (найближчі) </div>
       </div>
       <div class="container main">
          <ul class="list__cruises">
-            <li class="item__cruise" v-for="(cruise, index) in cruiseStore.cruisesList" :key="index">
+            <li class="item__cruise" v-for="(cruise, index) in cruiseStore.filteredCruises" :key="index">
                <div class="wrapper__icon">
                   <img :src="require(`../img/mainpage/travel${index}.jpg`)" alt="" class="icon-cruise">
                   <div class="raiting__cruise">
@@ -84,7 +84,7 @@
                   <div class="header__ship-fav">
                      <div class="name__ship">
                         <img src="../img/find-cruise/ship_icon.svg" alt="" class="icon-ship">
-                        Перлина морів
+                        {{ cruise.nameShip }}
                      </div>
                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" class="icon-fav" v-if="!cruise.fav" @click="cruise.fav = true">
                         <path d="M16 29C15.65 29 15.2938 28.9387 14.9313 28.8161C14.5688 28.6935 14.25 28.4974 13.975 28.2277L11.3875 25.9109C8.7375 23.5328 6.34375 21.173 4.20625 18.8317C2.06875 16.4903 1 13.9099 1 11.0905C1 8.78595 1.7875 6.86139 3.3625 5.31683C4.9375 3.77228 6.9 3 9.25 3C10.575 3 11.825 3.27581 13 3.82744C14.175 4.37907 15.175 5.13296 16 6.08911C16.825 5.13296 17.825 4.37907 19 3.82744C20.175 3.27581 21.425 3 22.75 3C25.1 3 27.0625 3.77228 28.6375 5.31683C30.2125 6.86139 31 8.78595 31 11.0905C31 13.9099 29.9375 16.4965 27.8125 18.8501C25.6875 21.2037 23.275 23.5695 20.575 25.9477L18.025 28.2277C17.75 28.4974 17.4313 28.6935 17.0688 28.8161C16.7063 28.9387 16.35 29 16 29ZM14.575 9.03112C13.85 8.02593 13.075 7.25978 12.25 6.73267C11.425 6.20556 10.425 5.94201 9.25 5.94201C7.75 5.94201 6.5 6.43234 5.5 7.41301C4.5 8.39368 4 9.61952 4 11.0905C4 12.3654 4.4625 13.7199 5.3875 15.1542C6.3125 16.5884 7.41875 17.9797 8.70625 19.3281C9.99375 20.6766 11.3188 21.9392 12.6812 23.116C14.0437 24.2928 15.15 25.2612 16 26.0212C16.85 25.2612 17.9563 24.2928 19.3188 23.116C20.6813 21.9392 22.0063 20.6766 23.2938 19.3281C24.5813 17.9797 25.6875 16.5884 26.6125 15.1542C27.5375 13.7199 28 12.3654 28 11.0905C28 9.61952 27.5 8.39368 26.5 7.41301C25.5 6.43234 24.25 5.94201 22.75 5.94201C21.575 5.94201 20.575 6.20556 19.75 6.73267C18.925 7.25978 18.15 8.02593 17.425 9.03112C17.25 9.27628 17.0375 9.46016 16.7875 9.58274C16.5375 9.70533 16.275 9.76662 16 9.76662C15.725 9.76662 15.4625 9.70533 15.2125 9.58274C14.9625 9.46016 14.75 9.27628 14.575 9.03112Z" fill="#0070CC"/>
@@ -107,7 +107,7 @@
                         +5555555 бонусів
                      </div>
                   </div>
-                  <button class="take__cruise">Більше інформації</button>
+                  <button class="take__cruise" @click="selectCruise(cruise.idCruise); $router.push('/reservcabin')">Більше інформації</button>
                </div>
             </li>
          </ul>
@@ -133,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, onBeforeMount } from 'vue';
+import { defineComponent, onBeforeMount } from 'vue';
 import { useAuthInfo } from '@/stores/Auth';
 import { useCruiseInfo } from '@/stores/Cruise';
 import { Calendar, DatePicker } from 'v-calendar';
@@ -156,6 +156,14 @@ export default defineComponent({
          }
       };
 
+      const selectCruise = (cruiseId: number) => {
+         cruiseStore.fetchCabinsByCruise(cruiseId);
+         const indexCruise = cruiseStore.cruisesList.findIndex(cruise => cruise.idCruise == cruiseId);
+         if (indexCruise != -1) {
+            cruiseStore.activeCruise = indexCruise;
+         }
+      };
+
       onBeforeMount(() => {
          cruiseStore.fetchCruises(); 
          // if (!authStore.isUserLoggedIn()) {
@@ -168,7 +176,8 @@ export default defineComponent({
          cruiseStore,
          Calendar,
          DatePicker,
-         scrollToTarget
+         scrollToTarget,
+         selectCruise
       }
    }
 })
@@ -181,7 +190,7 @@ export default defineComponent({
       object-fit: cover;
       height: get-vh(350px);
       background-repeat: no-repeat;
-      padding-top: get-vh(32px);
+      padding-top: get-vh(40px);
       & > .container {
          &.main {
             display: flex;
@@ -192,6 +201,7 @@ export default defineComponent({
                flex-direction: column;
             }
             & > .icon-logo {
+               cursor: pointer;
                width: get-vh(208px);
                height: get-vh(64px);
             }

@@ -6,4 +6,5 @@ public class CruisePoint
     public string PointName { get; set; }
     public int ListNo { get; set; }
     public int idCruise { get; set; }
+    public DateTime dateArrived { get; set; }
 }

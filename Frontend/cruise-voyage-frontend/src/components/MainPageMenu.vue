@@ -23,12 +23,12 @@
                <div class="container__find-cruise" :class="{active: cruiseStore.checkArrivedFrom || cruiseStore.checkArrivedTo}">
                   <div class="wrapper__find-something">
                      <div class="title__find">ВІДПРАВЛЕННЯ З</div>
-                     <div class="subtitle__find">{{ cruiseStore.activeArrivedFrom == -1 ? 'Будь-якого міста' : cruiseStore.cruisesList[cruiseStore.activeArrivedFrom].arrivedFrom }}</div>
+                     <div class="subtitle__find">{{ cruiseStore.activeArrivedFrom == -1 ? 'Будь-якого міста' : cruiseStore.travelFrom[cruiseStore.activeArrivedFrom] }}</div>
                      <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedFrom}" @click.stop="cruiseStore.checkArrivedFrom = !cruiseStore.checkArrivedFrom; cruiseStore.checkArrivedTo = false">
                   </div>
                   <div class="wrapper__find-something">
                      <div class="title__find">ПРИБУТТЯ У</div>
-                     <div class="subtitle__find">{{ cruiseStore.activeArrivedTo == -1 ? 'Будь-яке місто' : cruiseStore.cruisesList[cruiseStore.activeArrivedTo].arrivedTo }}</div>
+                     <div class="subtitle__find">{{ cruiseStore.activeArrivedTo == -1 ? 'Будь-яке місто' : cruiseStore.travelTo[cruiseStore.activeArrivedTo] }}</div>
                      <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedTo}" @click.stop="cruiseStore.checkArrivedTo = !cruiseStore.checkArrivedTo; cruiseStore.checkArrivedFrom = false">
                   </div>
                   <div class="wrapper__find-something">
@@ -36,25 +36,25 @@
                      <div class="subtitle__find">{{ cruiseStore.currentDate == undefined ? 'Будь-яка дата' : new Date(cruiseStore.currentDate).toLocaleDateString('uk-UA', {day: '2-digit', month: '2-digit', year: 'numeric'}) }}</div>
                      <img src="../img/mainpage/icon_expand.svg" alt="" class="icon-arrow" :class="{rotate: cruiseStore.checkArrivedDate}" @click.stop="cruiseStore.checkArrivedDate = !cruiseStore.checkArrivedDate">
                   </div>
-                  <button class="find__cruise">Пошук</button>
+                  <button class="find__cruise" @click="cruiseStore.FindCruise()">Пошук</button>
                </div>
                <div class="wrapper__find-cruises" :class="{visible: cruiseStore.checkArrivedFrom}">
                   <ul class="list__name__cruises">
-                     <li class="item__cruise" v-for="(cruise, index) in cruiseStore.cruisesList" :key="index" 
-                        @click.stop="cruiseStore.activeArrivedFrom = index" 
+                     <li class="item__cruise" v-for="(cruise, index) in cruiseStore.travelFrom" :key="index" 
+                        @click.stop="cruiseStore.activeArrivedFrom = index; cruiseStore.checkArrivedFrom = false" 
                         :class="{active: cruiseStore.activeArrivedFrom == index}"
                         v-show="cruiseStore.checkArrivedFrom">
-                        {{ cruise.arrivedFrom }}
+                        {{ cruise }} 
                      </li>
                   </ul>
                </div>
                <div class="wrapper__find-cruises" :class="{visibletwo: cruiseStore.checkArrivedTo}">
                   <ul class="list__name__cruises">
-                     <li class="item__cruise" v-for="(cruise, index) in cruiseStore.cruisesList" :key="index" 
-                        @click.stop="cruiseStore.activeArrivedTo = index" 
+                     <li class="item__cruise" v-for="(cruise, index) in cruiseStore.travelTo" :key="index" 
+                        @click.stop="cruiseStore.activeArrivedTo = index; cruiseStore.checkArrivedTo = false" 
                         :class="{active: cruiseStore.activeArrivedTo == index}"
                         v-show="cruiseStore.checkArrivedTo">
-                        {{ cruise.arrivedTo }}
+                        {{ cruise }}
                      </li>
                   </ul>
                </div>
@@ -198,6 +198,7 @@ export default defineComponent({
 
       onBeforeMount(() => {
          cruiseStore.fetchCruises(); 
+         cruiseStore.fetchCabinsType(); 
          // if (!authStore.isUserLoggedIn()) {
          //    authStore.Logout();
          // }
