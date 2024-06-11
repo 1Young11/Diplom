@@ -42,6 +42,7 @@ export const useAuthInfo = defineStore('authStore', {
                userStore.nameCustomer = userData.name;
                userStore.lastNameCustomer = userData.surname;
                userStore.phoneCustomer = userData.phone;
+               userStore.email = userData.email;
                this.isAuth = true;
                router.push('/mainpage');
             })
@@ -81,12 +82,8 @@ export const useAuthInfo = defineStore('authStore', {
                userStore.nameCustomer = userObj.name;
                userStore.lastNameCustomer = userObj.surname;
                userStore.phoneCustomer = userObj.phone;
+               userStore.email = userObj.email;
                this.isAuth = true;
-               console.log(0)
-               console.log(userStore.idCustomer)
-               console.log(userStore.nameCustomer)
-               console.log(userStore.lastNameCustomer)
-               console.log(userStore.phoneCustomer)
                return true;
             }
          }

@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia';
 import axios from 'axios';
 import router from '@/main';
+import { useUserInfo } from "@/stores/UserInfo";
 
 interface Cruise {
    checkArrivedFrom: boolean,
@@ -28,14 +29,15 @@ interface Cruise {
    pageReserve: number | null,
    currentTypeCabin: number,
    activeCabin: {ind: number, choosen: number},
-   currentReservation: number[],
+   currentReservation: Array<{idCabinBed: number, name: string, lastName: string, phoneNumber: string}>,
    typeCabins: Array<{type: string, price: number}>,
-   acceptCondition: boolean
+   acceptCondition: boolean,
 }
 
 interface InfoCruise {
    idCruise: number, arrivedFrom: string, arrivedTo: string, arrivedFromDate: string, arrivedToDate: string, countDays: string, startPrice: number, rating: number, fav: boolean, point: number, distance: number, cruisePoint: Array<{pointName: string, listNo: number, dateArrived: string}>, nameShip: string
 }
+
 
 export const useCruiseInfo = defineStore('cruiseStore', {
    state: (): Cruise => ({
@@ -72,6 +74,7 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       cabin: {},
       typeCabins: [],
       acceptCondition: false,
+
    }),
    actions: {
       onSwiper(swiper: any) {
@@ -166,11 +169,16 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       SelectPlaceInCabin(idCabin: number) {
          const index = this.cabin[this.activeFloor][this.activeCabin.ind].cabinBeds.findIndex(cabin => cabin.idCabinbed == idCabin)
          const isBooked = this.cabin[this.activeFloor][this.activeCabin.ind].cabinBeds[index];
-         if (this.currentReservation.includes(index)) return;
+         if (this.currentReservation.some(p => p.idCabinBed === idCabin)) return;
          if (isBooked.isBooked) {
             return;
          } else {
-            this.currentReservation.push(idCabin);
+            this.currentReservation.push({
+               idCabinBed: idCabin, 
+               name: '', 
+               lastName: '', 
+               phoneNumber: ''
+            });
          }
       },
       async fetchCabinsByCruise(cruiseId: number) {
@@ -218,6 +226,11 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       },
       async ReserveCabin() {
          if (!this.acceptCondition) return;
+         const userStore = useUserInfo();
+
+         this.currentReservation[this.currentReservation.length - 1].name = userStore.nameCustomer; 
+         this.currentReservation[this.currentReservation.length - 1].lastName = userStore.lastNameCustomer; 
+         this.currentReservation[this.currentReservation.length - 1].phoneNumber = userStore.phoneCustomer; 
          console.log(this.cruisesList[this.activeCruise].idCruise)
          console.log(this.typeCabins[this.currentTypeCabin].price * this.currentReservation.length)
          console.log(this.cruisesList[this.activeCruise].point * this.currentReservation.length)
@@ -227,7 +240,8 @@ export const useCruiseInfo = defineStore('cruiseStore', {
                idCruise: this.cruisesList[this.activeCruise].idCruise,
                price: this.typeCabins[this.currentTypeCabin].price * this.currentReservation.length,
                countBonus: this.cruisesList[this.activeCruise].point * this.currentReservation.length,
-               orderCabinBed: this.currentReservation
+               orderCabinBed: this.currentReservation,
+               idCustomer: userStore.idCustomer
             })
             .then(response => {
               

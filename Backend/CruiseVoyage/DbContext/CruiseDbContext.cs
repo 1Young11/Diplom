@@ -32,18 +32,27 @@ namespace CruiseVoyage.DbContext
             });
             modelBuilder.Entity<Cabin>(x =>
             {
-                x.HasKey(x => x.idCabin);
+                x.HasKey(c => c.idCabin);
                 x.HasOne<CabinType>(c => c.CabinType).WithMany().HasForeignKey(c => c.idCabintype);
-                x.HasMany<CabinBed>(c => c.CabinBeds).WithOne().HasForeignKey(c => c.idCabin);
+                x.HasMany<CabinBed>(c => c.CabinBeds).WithOne(c=> c.Cabin).HasForeignKey(c => c.idCabin);
             });
-            modelBuilder.Entity<CabinBed>().HasKey(x => x.idCabinbed);
+            modelBuilder.Entity<CabinBed>(x =>
+            {
+                x.HasKey(c => c.idCabinbed);
+                x.HasOne<Cabin>(c => c.Cabin).WithMany(c => c.CabinBeds).HasForeignKey(c => c.idCabin);
+            });
             modelBuilder.Entity<CabinType>().HasKey(x => x.idCabinType);
             modelBuilder.Entity<Order>(x =>
             {
                 x.HasKey(c => c.idOrder);
                 x.HasMany<OrderCabinBed>(c => c.OrderCabinBed).WithOne().HasForeignKey(c => c.idOrder);
+                x.HasOne<Cruises>(c => c.Cruises).WithMany().HasForeignKey(c => c.idCruise);
             });
-            modelBuilder.Entity<OrderCabinBed>().HasKey(x => x.idOrderCabinbed);
+            modelBuilder.Entity<OrderCabinBed>(x =>
+            {
+                x.HasKey(c => c.idOrderCabinbed);
+                x.HasOne<CabinBed>(c => c.CabinBed).WithMany().HasForeignKey(c=>c.idCabinBed);
+            });
         }
 
         public virtual DbSet<Customer> Customer { get; set; } = default!;

@@ -116,7 +116,7 @@
                <div class="title__cabinreserve">Доступно {{ cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds.length }} місця. Оберіть необхідну кількість:</div>
                <div class="wrapper__hotel">
                   <div class="item__status" v-for="(place, index) in cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds" :key="index" 
-                     :class="{block: place.isBooked, active: cruiseStore.currentReservation.includes(place.idCabinbed)}" 
+                     :class="{block: place.isBooked, active: cruiseStore.currentReservation.some(p => p.idCabinBed === place.idCabinbed)}" 
                      @click="cruiseStore.SelectPlaceInCabin(place.idCabinbed)"
                   >
                      {{ index + 1 }}  
@@ -142,9 +142,9 @@
                   <div class="item__block">{{ userStore.phoneCustomer }}</div>
                </div>
                <div class="wrapper__block inp" v-else>
-                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].name">
-                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].lastName">
-                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].phone">
+                  <input type="text" class="item__block" v-model="cruiseStore.currentReservation[index - 1].name">
+                  <input type="text" class="item__block" v-model="cruiseStore.currentReservation[index - 1].lastName">
+                  <input type="text" class="item__block" v-model="cruiseStore.currentReservation[index - 1].phoneNumber">
                </div>
                <div class="want__buyall" v-if="index == 0">
                   <div class="circle__check">

@@ -28,6 +28,7 @@ public class CustomerController : ControllerBase
         customer.Password = request.Password;
         customer.IdRole = 1;
         customer.CountPoint = 0;
+        customer.PhotoURL = "";
         await this._dbContext.Customer.AddAsync(customer);
         await this._dbContext.SaveChangesAsync();
         return this.Ok();
@@ -68,6 +69,7 @@ public class CustomerController : ControllerBase
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public int CountPoint { get; set; }
+        public string PhotoURL { get; set; } = null!;
     }
     
     public class LoginRequest

@@ -10,4 +10,5 @@ public class Customer
     public string Password { get; set; }
     public int IdRole { get; set; }
     public int CountPoint { get; set; }
+    public string? PhotoURL { get; set; }
 }
