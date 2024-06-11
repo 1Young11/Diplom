@@ -6,6 +6,13 @@ interface Auth {
    nameCustomer: string,
    lastNameCustomer: string,
    phoneCustomer: string,
+   passengers: Passenger[]
+}
+
+interface Passenger {
+   name: string,
+   lastName: string,
+   phone: string,
 }
 
 export const useUserInfo = defineStore('userStore', {
@@ -14,26 +21,15 @@ export const useUserInfo = defineStore('userStore', {
       nameCustomer: '',
       lastNameCustomer: '', 
       phoneCustomer: '', 
+
+      passengers: [
+         { name: '', lastName: '', phone: '' },
+         { name: '', lastName: '', phone: '' },
+         { name: '', lastName: '', phone: '' }
+      ]
    }),
    actions: {
-      // handleFileUpload(event: any) {
-      //    console.log(this.idCustomer)
-      //    const file = event.target.files[0];
-      //    const formData = new FormData();
-      //    formData.append('image', file);
-      //    // Отправляем изображение на сервер
-      //    axios.post('http://localhost:5282/api/Photo/upload', formData, {
-      //       headers: {
-      //          'Content-Type': 'multipart/form-data', idCustomer: this.idCustomer
-      //       }
-      //    }).then(response => {
-      //      // Обработка успешной загрузки
-      //      console.log('Image uploaded successfully');
-      //    }).catch(error => {
-      //      // Обработка ошибки загрузки
-      //      console.error('Error uploading image:', error);
-      //    });
-      // }
+     
    },
    getters: {
    

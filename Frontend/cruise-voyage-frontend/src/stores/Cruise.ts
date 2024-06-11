@@ -29,11 +29,12 @@ interface Cruise {
    currentTypeCabin: number,
    activeCabin: {ind: number, choosen: number},
    currentReservation: number[],
-   typeCabins: Array<{type: string, price: number}>
+   typeCabins: Array<{type: string, price: number}>,
+   acceptCondition: boolean
 }
 
 interface InfoCruise {
-   idCruise: number, arrivedFrom: string, arrivedTo: string, arrivedFromDate: string, arrivedToDate: string, countDays: string, startPrice: number, rating: number, fav: boolean, distance: number, cruisePoint: Array<{pointName: string, listNo: number, dateArrived: string}>, nameShip: string
+   idCruise: number, arrivedFrom: string, arrivedTo: string, arrivedFromDate: string, arrivedToDate: string, countDays: string, startPrice: number, rating: number, fav: boolean, point: number, distance: number, cruisePoint: Array<{pointName: string, listNo: number, dateArrived: string}>, nameShip: string
 }
 
 export const useCruiseInfo = defineStore('cruiseStore', {
@@ -70,6 +71,7 @@ export const useCruiseInfo = defineStore('cruiseStore', {
 
       cabin: {},
       typeCabins: [],
+      acceptCondition: false,
    }),
    actions: {
       onSwiper(swiper: any) {
@@ -123,6 +125,7 @@ export const useCruiseInfo = defineStore('cruiseStore', {
                startPrice: 5000,
                rating: item.rating,
                fav: false,
+               point: item.countPoint,
                distance: item.travelDistance, 
                cruisePoint: cruisePoints,
                nameShip: item.ship.nameShip
@@ -160,13 +163,14 @@ export const useCruiseInfo = defineStore('cruiseStore', {
             this.activeCabin.choosen = idCabin;
          }
       },
-      SelectPlaceInCabin(index: number) {
+      SelectPlaceInCabin(idCabin: number) {
+         const index = this.cabin[this.activeFloor][this.activeCabin.ind].cabinBeds.findIndex(cabin => cabin.idCabinbed == idCabin)
          const isBooked = this.cabin[this.activeFloor][this.activeCabin.ind].cabinBeds[index];
          if (this.currentReservation.includes(index)) return;
          if (isBooked.isBooked) {
             return;
          } else {
-            this.currentReservation.push(index);
+            this.currentReservation.push(idCabin);
          }
       },
       async fetchCabinsByCruise(cruiseId: number) {
@@ -211,6 +215,30 @@ export const useCruiseInfo = defineStore('cruiseStore', {
          const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
          const date = new Date(dateStr);
          return date.toLocaleDateString('uk-UA', options);
+      },
+      async ReserveCabin() {
+         if (!this.acceptCondition) return;
+         console.log(this.cruisesList[this.activeCruise].idCruise)
+         console.log(this.typeCabins[this.currentTypeCabin].price * this.currentReservation.length)
+         console.log(this.cruisesList[this.activeCruise].point * this.currentReservation.length)
+         console.log(this.currentReservation)
+         try {
+            await axios.post('http://localhost:5282/api/Order/addOrder', {
+               idCruise: this.cruisesList[this.activeCruise].idCruise,
+               price: this.typeCabins[this.currentTypeCabin].price * this.currentReservation.length,
+               countBonus: this.cruisesList[this.activeCruise].point * this.currentReservation.length,
+               orderCabinBed: this.currentReservation
+            })
+            .then(response => {
+              
+               router.push('/mainpage');
+            })
+            .catch(e => {
+               console.error(e)
+            });
+         } catch (error) {
+            console.error('Ошибка при отправке запроса:', error);
+         }
       }
    },
    getters: {

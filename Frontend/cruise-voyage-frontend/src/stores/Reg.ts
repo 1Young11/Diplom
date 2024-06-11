@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import router from '@/main';
+import CryptoJS from 'crypto-js';
 
 interface Registration {
    name: string,
@@ -40,6 +41,7 @@ export const useRegInfo = defineStore('regStore', {
    }),
    actions: {
       async SendInfoRegistration() {
+         const hashedPassword = CryptoJS.SHA256(this.newPassword).toString();
          if (this.name.length == 0 || this.name.length == 1) {
             this.trublName = true;
             setTimeout(() => {
@@ -75,12 +77,12 @@ export const useRegInfo = defineStore('regStore', {
                lastName: this.lastName,
                phone: this.mobilePhone,
                email: this.newEmail,
-               password: this.newPassword
+               password: hashedPassword
             })
             .then(response => {
                localStorage.setItem('userData', JSON.stringify({
                   email: this.newEmail,
-                  password: this.newPassword
+                  password: hashedPassword
                }));
                this.setExpireIn();
                router.push('/mainpage');

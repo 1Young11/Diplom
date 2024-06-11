@@ -72,6 +72,7 @@
                            block: cabin.cabinBeds.every(p => p.isBooked)
                         }" 
                         v-if="cruiseStore.currentTypeCabin == cabin.idCabintype">
+    
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" viewBox="0 0 25 20" fill="none" class="icon-check" v-if="!cabin.cabinBeds.some(p => p.isBooked)">
                            <path d="M11.5674 10.9333L10.2508 9.61665C10.0841 9.44999 9.87856 9.36665 9.63411 9.36665C9.38967 9.36665 9.18411 9.44999 9.01745 9.61665C8.85078 9.78332 8.76745 9.98888 8.76745 10.2333C8.76745 10.4778 8.85078 10.6833 9.01745 10.85L10.9508 12.7833C11.1266 12.9611 11.3316 13.05 11.5659 13.05C11.8003 13.05 12.0063 12.9611 12.1841 12.7833L16.0174 8.94999C16.1841 8.78332 16.2674 8.57777 16.2674 8.33332C16.2674 8.08888 16.1841 7.88332 16.0174 7.71665C15.8508 7.54999 15.6452 7.46665 15.4008 7.46665C15.1563 7.46665 14.9508 7.54999 14.7841 7.71665L11.5674 10.9333ZM12.5008 17.2C11.5048 17.2 10.5688 17.011 9.69278 16.633C8.81678 16.255 8.05478 15.742 7.40678 15.094C6.75878 14.446 6.24578 13.684 5.86778 12.808C5.48978 11.932 5.30078 10.996 5.30078 9.99999C5.30078 9.0011 5.49011 8.06243 5.86878 7.18399C6.24745 6.30543 6.76134 5.54127 7.41045 4.89149C8.05956 4.2416 8.82156 3.73054 9.69645 3.35832C10.5713 2.9861 11.5061 2.79999 12.5008 2.79999C13.4996 2.79999 14.4381 2.9861 15.3164 3.35832C16.1949 3.73054 16.9591 4.24165 17.6091 4.89165C18.2591 5.54165 18.7702 6.30599 19.1424 7.18466C19.5147 8.06343 19.7008 9.00232 19.7008 10.0013C19.7008 11.0004 19.5147 11.9361 19.1424 12.8083C18.7702 13.6805 18.2592 14.4412 17.6093 15.0903C16.9595 15.7394 16.1953 16.2533 15.3168 16.632C14.4383 17.0107 13.4997 17.2 12.5008 17.2Z" fill="#006A80"/>
                         </svg>
@@ -115,10 +116,10 @@
                <div class="title__cabinreserve">Доступно {{ cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds.length }} місця. Оберіть необхідну кількість:</div>
                <div class="wrapper__hotel">
                   <div class="item__status" v-for="(place, index) in cruiseStore.cabin[cruiseStore.activeFloor][cruiseStore.activeCabin.ind].cabinBeds" :key="index" 
-                     :class="{block: place.isBooked, active: cruiseStore.currentReservation.includes(index)}" 
-                     @click="cruiseStore.SelectPlaceInCabin(index)"
+                     :class="{block: place.isBooked, active: cruiseStore.currentReservation.includes(place.idCabinbed)}" 
+                     @click="cruiseStore.SelectPlaceInCabin(place.idCabinbed)"
                   >
-                     {{ index + 1 }} 
+                     {{ index + 1 }}  
                      <img src="../img/reserv-cabin/hotel.svg" alt="" class="icon-hotel" v-if="!place.isBooked">
                      <img src="../img/reserv-cabin/block.svg" alt="" class="icon-block" v-else>
                   </div>
@@ -141,9 +142,9 @@
                   <div class="item__block">{{ userStore.phoneCustomer }}</div>
                </div>
                <div class="wrapper__block inp" v-else>
-                  <input type="text" class="item__block">
-                  <input type="text" class="item__block">
-                  <input type="text" class="item__block">
+                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].name">
+                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].lastName">
+                  <input type="text" class="item__block" v-model="userStore.passengers[index - 1].phone">
                </div>
                <div class="want__buyall" v-if="index == 0">
                   <div class="circle__check">
@@ -175,19 +176,19 @@
                </ul>
             </div>
             <div class="wrapper__costinfo">
-               <div class="number__cabin">Каюта №{{ cruiseStore.activeCabin.choosen }} ({{ cruiseStore.activeFloor }} поверх) <span>₴80000</span></div>
+               <div class="number__cabin">Каюта №{{ cruiseStore.activeCabin.choosen }} ({{ cruiseStore.activeFloor }} поверх) <span>₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price * cruiseStore.currentReservation.length }}</span></div>
                <div class="status__cabin">{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].type }}, ₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price }} за ліжко <span>{{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'ліжко' : 'ліжка'}}, {{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'пасажир' : 'пасажири'}}</span></div>
             </div>
             <div class="wrapper__submit">
-               <div class="circle__check">
-                  <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check">
+               <div class="circle__check" @click="cruiseStore.acceptCondition = !cruiseStore.acceptCondition">
+                  <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check" v-if="cruiseStore.acceptCondition">
                </div>
                Я приймаю Умови користування сервісом
             </div>
             <div class="description__reserve">Уважно перевірте всі деталі бронювання, перед тим як підтверджувати їх. Для внесення змін у бронювання ви можете звернутися до Служби підтримки, але не пізніше ніж за 7 діб до відправлення. Бронювання може бути скасоване не пізніше ніж за 14 діб до відправлення. Оплата бронювання здійснюється у повному обсязі одразу після підтвердження даних. При скасуванні бронювання раніше, ніж за 14 діб до відправлення, кошти будуть повністю повернуті протягом 60 календарних днів. При пізнішому скасуванні кошти можуть бути повернуті лише частково.</div>
             <div class="wrapper__btn">
                <button class="choose" @click="cruiseStore.pageReserve = 1; cruiseStore.currentReservation = []; cruiseStore.activeCabin.ind = -1; cruiseStore.activeCabin.choosen = -1">Скасувати</button>
-               <button class="choose" @click="cruiseStore.pageReserve = 2">Підтвердити та сплатити</button>
+               <button class="choose" :class="{unactive: !cruiseStore.acceptCondition}" @click="cruiseStore.ReserveCabin()">Підтвердити та сплатити</button>
             </div>
          </div>
       </div>
@@ -273,6 +274,7 @@ export default defineComponent({
          & > .list__cruisepoint {
             margin-top: get-vh(50px);
             width: get-vh(688px);
+            height: get-vh(508px);
             gap: get-vh(28px);
             display: flex;
             flex-wrap: wrap;
@@ -713,6 +715,7 @@ export default defineComponent({
                   &.inp {
                      & > .item__block { 
                         text-align: center;
+                        width: get-vh(245px);
                         padding: 0 get-vh(12px);
                      }
                   }
@@ -947,7 +950,11 @@ export default defineComponent({
                   font-size: get-vh(22px);
                   font-weight: 600;
                   letter-spacing: -0.03em;
-                  &:hover {
+                  transition: color 0.25s ease-out;
+                  &.unactive {
+                     color: $txtDescription;
+                  }
+                  &:not(.unactive):hover {
                      background: rgba(255, 255, 255, 1);
                      color: $txtBlack;
                   }

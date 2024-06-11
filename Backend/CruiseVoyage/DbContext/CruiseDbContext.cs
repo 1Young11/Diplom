@@ -20,7 +20,6 @@ namespace CruiseVoyage.DbContext
                 e.HasMany<CruisePoint>(x => x.CruisePoints).WithOne().HasForeignKey(x=>x.idCruise);
                 e.HasOne(x => x.Ship).WithMany().HasForeignKey("idShip");
             });
-            modelBuilder.Entity<Photo>().HasKey(x => x.idPhoto);
             modelBuilder.Entity<CruisePoint>(e =>
             {
                 e.HasKey(x => x.idCruisePoint);
@@ -39,17 +38,24 @@ namespace CruiseVoyage.DbContext
             });
             modelBuilder.Entity<CabinBed>().HasKey(x => x.idCabinbed);
             modelBuilder.Entity<CabinType>().HasKey(x => x.idCabinType);
+            modelBuilder.Entity<Order>(x =>
+            {
+                x.HasKey(c => c.idOrder);
+                x.HasMany<OrderCabinBed>(c => c.OrderCabinBed).WithOne().HasForeignKey(c => c.idOrder);
+            });
+            modelBuilder.Entity<OrderCabinBed>().HasKey(x => x.idOrderCabinbed);
         }
 
         public virtual DbSet<Customer> Customer { get; set; } = default!;
         public virtual DbSet<Role> Role { get; set; } = default!;
         public virtual DbSet<Cruises> Cruises { get; set; } = default!;
-        public virtual DbSet<Photo> Photo { get; set; } = default!;
         public virtual DbSet<CruisePoint> CruisePoint { get; set; } = default!;
         
         public virtual DbSet<Ship> Ship { get; set; } = default!;
         public virtual DbSet<Cabin> Cabin { get; set; } = default!;
         public virtual DbSet<CabinBed> CabinBed { get; set; } = default!;
         public virtual DbSet<CabinType> CabinType { get; set; } = default!;
+        public virtual DbSet<Order> Order { get; set; } = default!;
+        public virtual DbSet<OrderCabinBed> OrderCabinBed { get; set; } = default!;
     }
 }

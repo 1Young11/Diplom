@@ -98,13 +98,13 @@
                   </div>
                   <div class="place__visit">
                      ПОДОРОЖ ({{ cruise.distance }} км): &nbsp;
-                     <span v-for="(point, index) in cruise.cruisePoint" :key="index">{{ point.pointName }} &nbsp;{{ cruise.cruisePoint.length == index + 1 ? '' : '•' }}&nbsp; </span>
+                     <div class="item__point" v-for="(point, index) in cruise.cruisePoint" :key="index">{{ point.pointName }}&nbsp;{{ cruise.cruisePoint.length == index + 1 ? '' : '•' }}&nbsp;</div>
                   </div>
                   <div class="countcost__bonus">
                      від ₴{{ cruise.startPrice }}
                      <div class="wrapper__bonus">
                         <img src="../img/find-cruise/ticket.svg" alt="" class="icon-bonus">
-                        +5555555 бонусів
+                        +{{ cruise.point }} бонусів
                      </div>
                   </div>
                   <button class="take__cruise" @click="selectCruise(cruise.idCruise); $router.push('/reservcabin')">Більше інформації</button>
@@ -166,9 +166,9 @@ export default defineComponent({
 
       onBeforeMount(() => {
          cruiseStore.fetchCruises(); 
-         // if (!authStore.isUserLoggedIn()) {
-         //    authStore.Logout();
-         // }
+         if (!authStore.isUserLoggedIn()) {
+            authStore.Logout();
+         }
       });
 
       return {
@@ -510,14 +510,21 @@ export default defineComponent({
                      }
                      & > .place__visit {
                         margin-top: get-vh(20px);
-                        padding-left: get-vh(36px);
-                        width: get-vh(950px);
-                        height: get-vh(40px);
+                        margin-left: get-vh(36px);
+                        width: get-vh(1000px);
                         display: flex;
+                        flex-wrap: wrap;
+                        gap: get-vh(6px);
+                        text-wrap: nowrap;
                         font-size: get-vh(16px);
                         font-weight: 600;
                         line-height: 1.25;
                         letter-spacing: -0.03em;
+                        & > .item__point {
+                           width: 200px;
+                           @include centerHorizontal;
+                           width: fit-content;
+                        }
                      }
                      & > .countcost__bonus {
                         margin-top: get-vh(24px);

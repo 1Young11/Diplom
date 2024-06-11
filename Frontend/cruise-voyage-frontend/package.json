@@ -17,10 +17,12 @@
     "v-calendar": "^3.1.2",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
+    "vue-cryptojs": "^2.4.6",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
+    "@types/crypto-js": "^4.2.2",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",

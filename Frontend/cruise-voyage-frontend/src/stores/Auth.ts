@@ -38,7 +38,6 @@ export const useAuthInfo = defineStore('authStore', {
                   localStorage.setItem('userData', JSON.stringify(userData));
                   this.setExpireIn();
                }
-               console.log(userData)
                userStore.idCustomer = userData.idCustomer;
                userStore.nameCustomer = userData.name;
                userStore.lastNameCustomer = userData.surname;
@@ -71,14 +70,31 @@ export const useAuthInfo = defineStore('authStore', {
          return;
       },
       isUserLoggedIn(): boolean {
+         const userStore = useUserInfo();
          const user = localStorage.getItem('userData');
          const expireIn = localStorage.getItem('userdata_expireIn');
          if (user && expireIn) {
+            const userObj = JSON.parse(user);
             const expireInDate = new Date(JSON.parse(expireIn));
             if (expireInDate > new Date()) {
+               userStore.idCustomer = userObj.idCustomer;
+               userStore.nameCustomer = userObj.name;
+               userStore.lastNameCustomer = userObj.surname;
+               userStore.phoneCustomer = userObj.phone;
+               this.isAuth = true;
+               console.log(0)
+               console.log(userStore.idCustomer)
+               console.log(userStore.nameCustomer)
+               console.log(userStore.lastNameCustomer)
+               console.log(userStore.phoneCustomer)
                return true;
             }
          }
+         console.log(1)
+         console.log(userStore.idCustomer)
+         console.log(userStore.nameCustomer)
+         console.log(userStore.lastNameCustomer)
+         console.log(userStore.phoneCustomer)
          return false;
       },
       Logout() {

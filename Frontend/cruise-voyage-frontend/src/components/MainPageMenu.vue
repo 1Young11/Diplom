@@ -72,7 +72,6 @@
             el: '.swiper-scrollbar',
             hide: false,
             draggable: true,
-            dragSize: 'auto'
          }"
          :modules="modules"
          :slidesPerView="'auto'"
@@ -199,9 +198,9 @@ export default defineComponent({
       onBeforeMount(() => {
          cruiseStore.fetchCruises(); 
          cruiseStore.fetchCabinsType(); 
-         // if (!authStore.isUserLoggedIn()) {
-         //    authStore.Logout();
-         // }
+         if (!authStore.isUserLoggedIn()) {
+            authStore.Logout();
+         }
       });
 
       const scrollToTarget = (target: string) => {
