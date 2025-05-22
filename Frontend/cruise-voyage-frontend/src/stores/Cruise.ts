@@ -18,6 +18,9 @@ interface Cruise {
    activeCruise: number,
    countFloors: number[],
    activeFloor: number,
+   luxeEat: boolean,
+   spa: boolean,
+   vipAccess: boolean,
    cabin: {[key : number]: Array<{
          cabinBeds: Array<{idCabin: number, idCabinbed: number, isBooked: boolean, lastName: string, name: string, phoneNumber: string}>,  
          cabinType: number,
@@ -70,6 +73,9 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       currentTypeCabin: -1,
       activeCabin: {ind: -1, choosen: -1},
       currentReservation: [],
+      luxeEat: false,
+      spa: false,
+      vipAccess: false,
 
       cabin: {},
       typeCabins: [],
@@ -133,7 +139,6 @@ export const useCruiseInfo = defineStore('cruiseStore', {
                cruisePoint: cruisePoints,
                nameShip: item.ship.nameShip
             })
-            this.filteredCruises = this.cruisesList;
 
             if (!this.travelFrom.includes(item.arrivedFrom)) {
                this.travelFrom.push(item.arrivedFrom);
@@ -151,13 +156,14 @@ export const useCruiseInfo = defineStore('cruiseStore', {
      
          if (searchDate && searchDate < dateToday) return;
      
+         router.push('/findcruise');
          this.filteredCruises = this.cruisesList.filter(cruise => {
             const matchArriveFrom = !arrivefrom || cruise.arrivedFrom === arrivefrom;
             const matchArriveTo = !arriveto || cruise.arrivedTo === arriveto;
             const matchDate = !searchDate || new Date(cruise.arrivedFromDate) >= searchDate;
             return matchArriveFrom && matchArriveTo && matchDate;
          });
-         router.push('/findcruise');
+         console.log(this.filteredCruises)
       },
       HandleClickActiveCabin(idCabin: number) {
          const indCabin =  this.cabin[this.activeFloor].findIndex(cabin => cabin.idCabin == idCabin);
@@ -227,14 +233,10 @@ export const useCruiseInfo = defineStore('cruiseStore', {
       async ReserveCabin() {
          if (!this.acceptCondition) return;
          const userStore = useUserInfo();
-
          this.currentReservation[this.currentReservation.length - 1].name = userStore.nameCustomer; 
          this.currentReservation[this.currentReservation.length - 1].lastName = userStore.lastNameCustomer; 
          this.currentReservation[this.currentReservation.length - 1].phoneNumber = userStore.phoneCustomer; 
-         console.log(this.cruisesList[this.activeCruise].idCruise)
-         console.log(this.typeCabins[this.currentTypeCabin].price * this.currentReservation.length)
-         console.log(this.cruisesList[this.activeCruise].point * this.currentReservation.length)
-         console.log(this.currentReservation)
+         this.pageReserve = 4;
          try {
             await axios.post('http://localhost:5282/api/Order/addOrder', {
                idCruise: this.cruisesList[this.activeCruise].idCruise,
@@ -245,7 +247,7 @@ export const useCruiseInfo = defineStore('cruiseStore', {
             })
             .then(response => {
               
-               router.push('/mainpage');
+               // router.push('/mainpage');
             })
             .catch(e => {
                console.error(e)

@@ -19,10 +19,11 @@
             </div>
             <div class="sub__info">{{ userStore.phoneCustomer }}</div>
             <div class="sub__info">{{ userStore.email }}</div>
+            <div class="sub__info">Кількість баллів: {{ userStore.countPoint }}</div>
             <button class="choose__item" :class="{active: userStore.activeBlock == 0}" @click="userStore.activeBlock = 0">Бронювання</button>
             <button class="choose__item" :class="{active: userStore.activeBlock == 1}" @click="userStore.activeBlock = 1">Магазин бонусів</button>
          </div>
-         <div class="wrapper__rightpart">
+         <div class="wrapper__rightpart" v-if="userStore.activeBlock == 0">
             <div class="item__hisstory" v-for="(history, index) in userStore.historyCruise" :key="index" :class="{notpayed: history.statusPayment == 0}">
                <div class="header__info">
                   <div class="name__travell">{{ history.cruises.arrivedTo }}</div>
@@ -36,7 +37,7 @@
                      {{ cruiseStore.formatDate(history.cruises.cruisePoints[0].dateArrived).slice(2) }} 
                      {{ new Date(history.cruises.cruisePoints[history.cruises.cruisePoints.length - 1].dateArrived).toLocaleString('uk-UA', {year: 'numeric'}) }}
                   </div>
-                  <div class="make__rating">
+                  <div class="make__rating" v-if="history.statusPayment != 0">
                      Оцініть подорож 
                      <div class="container__star" @mouseleave="userStore.RatingFlag(-1)">
                         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"  @mouseover="userStore.RatingFlag(index)"
@@ -63,6 +64,18 @@
                </div>
             </div>
          </div>
+         <div class="wrapper__rightpart" v-else>
+            <ul class="list__items">
+               <li class="item__shop" v-for="(shopitem, index) in userStore.listShops" :key="index">
+                  <img :src="require(`../img/reserv-cabin/${shopitem.img}.png`)" alt="" class="icon-item">
+                  <div class="name__item">{{ shopitem.name }}</div>
+                  <div class="cost">
+                     <img src="../img/reserv-cabin/icon.svg" alt="" class="icon-cost">
+                     {{ shopitem.cost }}
+                  </div>
+               </li>
+            </ul>
+         </div>
       </main>
    </div>
 </template>
@@ -80,6 +93,7 @@ export default defineComponent({
       onBeforeMount(() => {
          userStore.fetchHistoryOrder(4); 
       });
+
 
       return {
          userStore,
@@ -225,12 +239,12 @@ export default defineComponent({
                font-weight: 600;
                line-height: 1.5;
                letter-spacing: -0.02em;
-               &:nth-child(4) {
+               &:nth-child(4), &:nth-child(5) {
                   margin-top: get-vh(12px);
                }
             }
             & > .choose__item {
-               margin-top: get-vh(120px);
+               margin-top: get-vh(90px);
                width: get-vh(360px);
                height: get-vh(72px);
                border-radius: get-vh(24px);
@@ -247,7 +261,7 @@ export default defineComponent({
                   background: #177BCF;
                   color: $txtPrimary;
                }
-               &:nth-child(6) {
+               &:nth-child(7) {
                   margin-top: get-vh(10px);
                }
             }
@@ -356,6 +370,47 @@ export default defineComponent({
                   }
                   & > .right__info {
                      font-size: get-vh(26px);
+                     font-weight: 700;
+                     letter-spacing: -0.03em;
+                  }
+               }
+            }
+            & > .list__items {
+               width: 100%;
+               height: 100%;
+               padding: get-vh(32px);
+               display: flex;
+               flex-wrap: wrap;
+               gap: get-vh(20px);
+               & > .item__shop {
+                  position: relative;
+                  width: get-vh(247px);
+                  height: get-vh(240px);
+                  border-radius: get-vh(16px);
+                  background: #ECECEE;
+                  display: flex;
+                     flex-direction: column;
+                     align-items: center;
+                  & > .icon-item {
+                     width: get-vh(187px);
+                     height: get-vh(187px);
+                  }
+                  & > .name__item {
+                     position: absolute;
+                     bottom: get-vh(43px);
+                     color: #1A1A1A;
+                     text-align: center;
+                     font-size: get-vh(24px);
+                     font-weight: 600;
+                     letter-spacing: -0.02em;
+                  }
+                  & > .cost {
+                     position: absolute;
+                     bottom: get-vh(23px);
+                     @include centerHorizontal;
+                     gap: get-vh(8px);
+                     color: rgba(26, 26, 26, 0.60);
+                     font-size: get-vh(18px);
                      font-weight: 700;
                      letter-spacing: -0.03em;
                   }

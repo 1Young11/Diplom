@@ -34,6 +34,7 @@ export const useAuthInfo = defineStore('authStore', {
             })
             .then(response => {
                const userData = response.data;
+               console.log(userData)
                if (this.savePassword) {
                   localStorage.setItem('userData', JSON.stringify(userData));
                   this.setExpireIn();
@@ -43,6 +44,7 @@ export const useAuthInfo = defineStore('authStore', {
                userStore.lastNameCustomer = userData.surname;
                userStore.phoneCustomer = userData.phone;
                userStore.email = userData.email;
+               userStore.countPoint = userData.countPoint;
                this.isAuth = true;
                router.push('/mainpage');
             })
@@ -83,15 +85,11 @@ export const useAuthInfo = defineStore('authStore', {
                userStore.lastNameCustomer = userObj.surname;
                userStore.phoneCustomer = userObj.phone;
                userStore.email = userObj.email;
+               userStore.countPoint = userObj.countPoint;
                this.isAuth = true;
                return true;
             }
          }
-         console.log(1)
-         console.log(userStore.idCustomer)
-         console.log(userStore.nameCustomer)
-         console.log(userStore.lastNameCustomer)
-         console.log(userStore.phoneCustomer)
          return false;
       },
       Logout() {

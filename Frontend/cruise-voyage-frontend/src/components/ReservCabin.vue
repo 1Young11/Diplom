@@ -2,7 +2,7 @@
    <div class="bg__rout">
       <div class="rout__part">
          <img src="../img/reg-auth/logo.png" alt="" class="icon-logo">
-         <div class="name__totravell">{{ cruiseStore.cruisesList[cruiseStore.activeCruise].arrivedFrom }}</div>
+         <div class="name__totravell">{{ cruiseStore.cruisesList[cruiseStore.activeCruise].arrivedTo }}</div>
          <div class="wrapper__info">
             <div class="item__info">
                <div class="title__info">{{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[0].dateArrived).toLocaleString('uk-UA', {day: '2-digit'}) }} &nbsp; –  &nbsp; {{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint.length - 1].dateArrived).toLocaleString('uk-UA', {day: '2-digit'}) }} {{ cruiseStore.formatDate(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[0].dateArrived).slice(2) }} {{ new Date(cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint[cruiseStore.cruisesList[cruiseStore.activeCruise].cruisePoint.length - 1].dateArrived).toLocaleString('uk-UA', {year: 'numeric'}) }}</div>
@@ -179,6 +179,27 @@
                <div class="number__cabin">Каюта №{{ cruiseStore.activeCabin.choosen }} ({{ cruiseStore.activeFloor }} поверх) <span>₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price * cruiseStore.currentReservation.length }}</span></div>
                <div class="status__cabin">{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].type }}, ₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price }} за ліжко <span>{{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'ліжко' : 'ліжка'}}, {{ cruiseStore.currentReservation.length }} {{ cruiseStore.currentReservation.length == 1 ? 'пасажир' : 'пасажири'}}</span></div>
             </div>
+            <div class="wrapper__doppremium">
+               <div class="circle__check" @click="cruiseStore.luxeEat = !cruiseStore.luxeEat">
+                  <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check" v-if="cruiseStore.luxeEat">
+               </div>
+               Триразове люкс-харчування
+               <div class="count__cost">₴1000/пас.</div>
+            </div>
+            <div class="wrapper__doppremium">
+               <div class="circle__check" @click="cruiseStore.spa = !cruiseStore.spa">
+                  <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check" v-if="cruiseStore.spa">
+               </div>
+               Комплекс спа та фітнесу
+               <div class="count__cost">₴2000/пас.</div>
+            </div>
+            <div class="wrapper__doppremium">
+               <div class="circle__check" @click="cruiseStore.vipAccess = !cruiseStore.vipAccess">
+                  <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check" v-if="cruiseStore.vipAccess">
+               </div>
+               VIP-доступ, пріоритет у обслуговуванні
+               <div class="count__cost">₴3000/пас.</div>
+            </div>
             <div class="wrapper__submit">
                <div class="circle__check" @click="cruiseStore.acceptCondition = !cruiseStore.acceptCondition">
                   <img src="../img/reserv-cabin/check.svg" alt="" class="icon-check" v-if="cruiseStore.acceptCondition">
@@ -191,26 +212,104 @@
                <button class="choose" :class="{unactive: !cruiseStore.acceptCondition}" @click="cruiseStore.ReserveCabin()">Підтвердити та сплатити</button>
             </div>
          </div>
+         <div class="download__order" v-if="cruiseStore.pageReserve == 4">
+            <div class="title__cabin">Сплата за бронювання</div>
+            <div class="subtitle__reserve">Роздрукуйте цей чек та сплатіть у будь-якому банку <br>               Також ви можете сплатити його у нашому офісі (м. Київ, вул. Хрещатик 322/8) </div>
+            <div class="wrapper__check" style="color: black;
+            position: relative;
+               margin-top: 36px;
+               padding-top: 36px;
+               width: 420px;
+               height: 566px;
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               text-align: center;
+               font-family: Consolas;
+               font-size: 20px;
+               font-weight: 400;
+               line-height: normal;
+               letter-spacing: -0.08em;" ref="check">
+               <img src="../img/reserv-cabin/check.png" alt="" class="icon-wrapper" style="
+                  position: absolute;
+                  top: 0;
+                  z-index: -1;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+               ">
+               <div class="info__text">ПАТ “КРУЇЗ-ВОЯЖ УКРАЇНА” </div>
+               <div class="info__text">ФІСКАЛЬНИЙ ЧЕК</div>
+               <div class="info__text">+38(098)765-34-21</div>
+               <div class="info__text">payments@cruisevoyage.com</div>
+               <div class="info__text">м. Київ, вул. Хрещатик 322/8</div>
+               <div class="wrapper__title">Послуга <span>Ціна</span></div>
+               <div class="line"></div>
+               <div class="wrapper__title">
+                  {{ cruiseStore.currentReservation.length }}* {{ cruiseStore.cruisesList[cruiseStore.activeCruise].arrivedTo }} ({{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].type }}) 
+                  <span>₴{{ cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price * cruiseStore.currentReservation.length }}</span>
+               </div>
+               <div class="wrapper__title" v-if="cruiseStore.luxeEat">
+                  {{ cruiseStore.currentReservation.length }}* Триразове люкс-харчування
+                  <span>₴{{ cruiseStore.currentReservation.length * 1000 }}</span>
+               </div>
+               <div class="wrapper__title" v-if="cruiseStore.spa">
+                  {{ cruiseStore.currentReservation.length }}* Комплекс спа та фітнесу
+                  <span>₴{{ cruiseStore.currentReservation.length * 2000 }}</span>
+               </div>
+               <div class="wrapper__title" v-if="cruiseStore.vipAccess">
+                  {{ cruiseStore.currentReservation.length }}* VIP-доступ, пріоритет
+                  <span>₴{{ cruiseStore.currentReservation.length * 3000 }}</span>
+               </div>
+               <div class="line"></div>
+               <div class="wrapper__title">До сплати <span>₴{{ 
+                     (cruiseStore.typeCabins[cruiseStore.currentTypeCabin].price * cruiseStore.currentReservation.length) + 
+                     (cruiseStore.luxeEat ? cruiseStore.currentReservation.length * 1000 : 0) + 
+                     (cruiseStore.spa ? cruiseStore.currentReservation.length * 2000 : 0) + 
+                     (cruiseStore.vipAccess ? cruiseStore.currentReservation.length * 3000 : 0) 
+                  }}</span>
+               </div>
+               <div class="info__text">ІПН: 1234123412</div>
+               <div class="info__text">IBAN: UA204421977979436775481244196</div>
+            </div>
+            <div class="wrapper__btn">
+               <button class="choose" @click="$router.push('/profile');">В особистий кабінет</button>
+               <button class="choose" @click="generatePDF">Роздрукувати</button>
+            </div>
+         </div>
       </div>
    </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount } from "vue";
+import { ref, defineComponent, onBeforeMount } from "vue";
 import { useCruiseInfo } from "@/stores/Cruise";
 import { useUserInfo } from "@/stores/UserInfo";
+import html2pdf from 'html2pdf.js';
 
 export default defineComponent({
    setup() {
       const cruiseStore = useCruiseInfo();
       const userStore = useUserInfo();
+      const check = ref(null);
       onBeforeMount(() => {
          cruiseStore.fetchCabinsType(); 
       });
+      const generatePDF = () => {
+         if (check.value) {
+            html2pdf()
+              .from(check.value)
+              .save();
+         } else {
+            console.error('Wrapper element is not found.');
+         }
+      }
 
       return {
          cruiseStore,
-         userStore
+         userStore,
+         generatePDF,
+         check,
       };
    },
 });
@@ -908,6 +1007,33 @@ export default defineComponent({
                   letter-spacing: -0.02em;
                }
             }
+            & > .wrapper__doppremium {
+               margin-top: get-vh(30px);
+               width: get-vh(720px);
+               @include centerHorizontal;
+               font-size: get-vh(20px);
+               font-weight: 600;
+               letter-spacing: -0.02em;
+               &:nth-child(6), &:nth-child(7) {
+                  margin-top: get-vh(12px);
+               }
+               & > .circle__check { 
+                  margin-right: get-vh(12px);
+                  width: get-vh(36px);
+                  height: get-vh(36px);
+                  @include centerHorizontal;
+                  justify-content: center;
+                  border-radius: get-vh(14px);
+                  background: rgba(255, 255, 255, 0.10);
+                  & > .icon-check {
+                     width: get-vh(27px);
+                     height: get-vh(27px);
+                  }
+               }
+               & > .count__cost {
+                  margin-left: auto;
+               }
+            }
             & > .wrapper__submit {
                margin-top: get-vh(46px);
                @include centerHorizontal;
@@ -955,6 +1081,90 @@ export default defineComponent({
                      color: $txtDescription;
                   }
                   &:not(.unactive):hover {
+                     background: rgba(255, 255, 255, 1);
+                     color: $txtBlack;
+                  }
+               }
+            }
+         }
+         & > .download__order {
+            @include centerHorizontal;
+            flex-direction: column;
+            text-align: center;
+            & > .title__cabin {
+               font-size: get-vh(48px);
+               font-weight: 500;
+               letter-spacing: -0.03em;
+            }
+            & > .subtitle__reserve {
+               margin-top: get-vh(7px);
+               font-size: get-vh(16px);
+               font-weight: 600;
+               line-height: 1.2;
+               letter-spacing: -0.02em;
+            }
+            & > .wrapper__check { 
+               position: relative;
+               margin-top: get-vh(36px);
+               padding-top: get-vh(36px);
+               width: get-vh(420px);
+               height: get-vh(566px);
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               color: $txtBlack;
+               text-align: center;
+               font-family: Consolas;
+               font-size: get-vh(20px);
+               font-weight: 400;
+               line-height: normal;
+               letter-spacing: -0.08em;
+               & > .icon-wrapper {
+                  position: absolute;
+                  top: 0;
+                  z-index: -1;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+               }
+               & > .info__text {
+                  &:nth-child(3) {
+                     margin-top: get-vh(10px);
+                  }
+                  &:nth-child(14) {
+                     margin-top: get-vh(30px);
+                  }
+               }
+               & > .wrapper__title {
+                  margin-top: get-vh(30px);
+                  width: get-vh(364px);
+                  display: flex;
+                  justify-content: space-between;
+                  &:nth-child(8),&:nth-child(9),&:nth-child(10),&:nth-child(11),&:nth-child(14)  {
+                     margin-top: get-vh(4px);
+                  }
+               }
+               & > .line {
+                  margin-top: get-vh(10px);
+                  width: get-vh(364px);
+                  height: get-vh(2px);
+                  background: #000;
+               }
+            }
+            & > .wrapper__btn {
+               margin-top: get-vh(88px);
+               @include centerHorizontal;
+               justify-content: center;
+               gap: get-vh(16px);
+               & > .choose {
+                  height: get-vh(56px);
+                  padding: 0px get-vh(64px);
+                  border-radius: get-vh(18px);
+                  background: rgba(255, 255, 255, 0.12);
+                  font-size: get-vh(22px);
+                  font-weight: 600;
+                  letter-spacing: -0.03em;
+                  &:hover {
                      background: rgba(255, 255, 255, 1);
                      color: $txtBlack;
                   }

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import { createRouter, createWebHashHistory } from 'vue-router';
 import App from './App.vue';
 import VCalendar from 'v-calendar';
+import 'html2pdf.js';
 import 'v-calendar/style.css';
 
 import './styles/_reset.scss';
